@@ -1,60 +1,37 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-import time
 import unittest
 
+class TestUniqueSelectors(unittest.TestCase):
+    def setUp(self):
+        self.driver = webdriver.Chrome()
 
-class TestAbs(unittest.TestCase):
-    def set_up(self):
-        self.browser = webdriver.Chrome()
-
-    def test_abs1(self):
-        link = "http://suninjuly.github.io/registration1.html"
-        browser = webdriver.Chrome()
+    def fill_form(self, link):
+        browser = self.driver
         browser.get(link)
 
-        input1 = browser.find_element(By.CSS_SELECTOR, '.first_block .form-control.first')
-        input1.send_keys("Ivan")
-        input2 = browser.find_element(By.CSS_SELECTOR, '.first_block .form-control.second')
-        input2.send_keys("uaos@nkld.ck")
-        input3 = browser.find_element(By.CSS_SELECTOR, '.first_block .form-control.third')
-        input3.send_keys("wadawd")
+        browser.find_element(By.CSS_SELECTOR, '.first_block .first').send_keys('Ivan')
+        browser.find_element(By.CSS_SELECTOR, '.first_block .second').send_keys('Dorogov')
+        browser.find_element(By.CSS_SELECTOR, '.third_class .third').send_keys('sawed@gmail.com')
+        browser.find_element(By.CSS_SELECTOR, "button.btn").click()
 
-        button = browser.find_element(By.CSS_SELECTOR, "button.btn")
-        button.click()
-        time.sleep(1)
+        welcome_text = browser.find_element(By.TAG_NAME, 'h1').text
+        return welcome_text
 
-        welcome_text_elt = browser.find_element(By.TAG_NAME, "h1")
-        welcome_text = welcome_text_elt.text
-        self.assertEqual("Congratulations! You have successfully registered!", welcome_text)
+    def test_registration_1(self):
+        link = 'http://suninjuly.github.io/registration1.html'
+        registration_result = self.fill_form(link)
 
-    def test_abs2(self):
-        link = "http://suninjuly.github.io/registration2.html"
+        self.assertEqual("Congratulations! You have successfully registered!", registration_result)
 
-        browser.get(link)
-        input1 = browser.find_element(By.CSS_SELECTOR, '.first_block .form-control.first')
-        input1.send_keys("Ivan")
-        input2 = browser.find_element(By.CSS_SELECTOR, '.first_block .form-control.second')
-        input2.send_keys("uaos@nkld.ck")
-        input3 = browser.find_element(By.CSS_SELECTOR, '.first_block .form-control.third')
-        input3.send_keys("wadawd")
+    def test_registration_2(self):
+        link = 'http://suninjuly.github.io/registration2.html'
+        registration_result = self.fill_form(link)
 
-        # Отправляем заполненную форму
-        button = browser.find_element(By.CSS_SELECTOR, "button.btn")
-        button.click()
+        self.assertEqual("Congratulations! You have successfully registered!", registration_result)
 
-        # Проверяем, что смогли зарегистрироваться
-        # ждем загрузки страницы
-        time.sleep(1)
-
-        # находим элемент, содержащий текст
-        welcome_text_elt = browser.find_element(By.TAG_NAME, "h1")
-        # записываем в переменную welcome_text текст из элемента welcome_text_elt
-        welcome_text = welcome_text_elt.text
-
-        # с помощью assert проверяем, что ожидаемый текст совпадает с текстом на странице сайт
-        self.assertEqual("Congratulations! You have successfully registered!", welcome_text)
-
+    def tearDown(self):
+        self.driver.close()
 
 if __name__ == "__main__":
     unittest.main()
